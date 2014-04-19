@@ -1778,6 +1778,7 @@ function! s:InitWindow(autoclose) abort
     call s:debug('InitWindow called with autoclose: ' . a:autoclose)
 
     setlocal filetype=tagbar
+    setlocal cursorline " jwu ADD
 
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
