@@ -17,3 +17,13 @@ There is an example in `:h tagbar-issues` about how to run ctags manually so you
 
 You can also have a look at ctags bugs that have previously been filed on Tagbar here:  
 https://github.com/majutsushi/tagbar/issues?labels=ctags-bug&page=1&state=closed
+
+## What I changed
+
+**Add target line highlight**
+
+I add highlight for the target line to help user preview of the context clearly.
+
+**Use ex-utility's method for manipulate windows**
+
+Use `ex#windows#...` funcitons in ex-utility for manipulating Vim windows.
