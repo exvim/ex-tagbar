@@ -1701,6 +1701,13 @@ endfunction
 
 " s:OpenWindow() {{{2
 function! s:OpenWindow(flags) abort
+    " jwu ADD
+    let winnr = winnr()
+    if ex#window#check_if_autoclose(winnr)
+        call ex#window#close(winnr)
+    endif
+    call ex#window#goto_edit_window()
+
     call s:debug("OpenWindow called with flags: '" . a:flags . "'")
 
     let autofocus = a:flags =~# 'f'
@@ -1851,38 +1858,40 @@ function! s:CloseWindow() abort
 
     let tagbarbufnr = winbufnr(tagbarwinnr)
 
-    if winnr() == tagbarwinnr
-        if winbufnr(2) != -1
-            " Other windows are open, only close the tagbar one
+    " jwu MODIFY
+    call ex#window#close(tagbarwinnr)
+    " if winnr() == tagbarwinnr
+    "     if winbufnr(2) != -1
+    "         " Other windows are open, only close the tagbar one
 
-            let curfile = s:known_files.getCurrent(0)
+    "         let curfile = s:known_files.getCurrent(0)
 
-            close
+    "         close
 
-            " Try to jump to the correct window after closing
-            call s:goto_win('p')
+    "         " Try to jump to the correct window after closing
+    "         call s:goto_win('p')
 
-            if !empty(curfile)
-                let filebufnr = bufnr(curfile.fpath)
+    "         if !empty(curfile)
+    "             let filebufnr = bufnr(curfile.fpath)
 
-                if bufnr('%') != filebufnr
-                    let filewinnr = bufwinnr(filebufnr)
-                    if filewinnr != -1
-                        call s:goto_win(filewinnr)
-                    endif
-                endif
-            endif
-        endif
-    else
-        " Go to the tagbar window, close it and then come back to the original
-        " window. Save a win-local variable in the original window so we can
-        " jump back to it even if the window number changed.
-        call s:mark_window()
-        call s:goto_win(tagbarwinnr)
-        close
+    "             if bufnr('%') != filebufnr
+    "                 let filewinnr = bufwinnr(filebufnr)
+    "                 if filewinnr != -1
+    "                     call s:goto_win(filewinnr)
+    "                 endif
+    "             endif
+    "         endif
+    "     endif
+    " else
+    "     " Go to the tagbar window, close it and then come back to the original
+    "     " window. Save a win-local variable in the original window so we can
+    "     " jump back to it even if the window number changed.
+    "     call s:mark_window()
+    "     call s:goto_win(tagbarwinnr)
+    "     close
 
-        call s:goto_markedwin()
-    endif
+    "     call s:goto_markedwin()
+    " endif
 
     call s:ShrinkIfExpanded()
 
@@ -2988,6 +2997,9 @@ function! s:JumpToTag(stay_in_tagbar) abort
     " Center the tag in the window and jump to the correct column if available
     normal! z.
     call cursor(taginfo.fields.line, taginfo.fields.column)
+
+    " jwu ADD
+    call ex#hl#target_line(curline)
 
     normal! zv
 
