@@ -1774,11 +1774,20 @@ function! s:OpenWindow(flags) abort
 endfunction
 
 " s:InitWindow() {{{2
+
+" jwu ADD
+function s:on_close()
+    " go back to edit buffer
+    call ex#window#goto_edit_window()
+    call ex#hl#clear_target()
+endfunction
+
 function! s:InitWindow(autoclose) abort
     call s:debug('InitWindow called with autoclose: ' . a:autoclose)
 
     setlocal filetype=tagbar
     setlocal cursorline " jwu ADD
+    au! BufWinLeave <buffer> call <SID>on_close() " jwu ADD
 
     setlocal noreadonly " in case the "view" mode is used
     setlocal buftype=nofile
